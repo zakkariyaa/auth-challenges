@@ -1,8 +1,11 @@
-const { getUserByEmail } = require("../model/user.js");
-const { Layout } = require("../templates.js");
+const { getUserByEmail } = require('../model/user.js');
+const { Layout } = require('../templates.js');
+const { createSession } = require('../model/session.js');
+
+const bcrypt = require('bcryptjs');
 
 function get(req, res) {
-  const title = "Log in to your account";
+  const title = 'Log in to your account';
   const content = /*html*/ `
     <div class="Cover">
       <h1>${title}</h1>
@@ -23,20 +26,24 @@ function get(req, res) {
   res.send(body);
 }
 
-function post(req, res) {
+async function post(req, res) {
   const { email, password } = req.body;
   const user = getUserByEmail(email);
-  if (!email || !password || !user) {
-    return res.status(400).send("<h1>Login failed</h1>");
+  const match = await bcrypt.compare(password, user.hash);
+
+  if (!email || !password || !user || !match) {
+    return res.status(400).send('<h1>Login failed</h1>');
   }
-  res.send("to-do");
-  /**
-   * [1] Compare submitted password to stored hash
-   * [2] If no match redirect back to same page so user can retry
-   * [3] If match create a session with their user ID,
-   *     set a cookie with the session ID,
-   *     redirect to the user's confession page (e.g. /confessions/3)
-   */
+
+  const sessionId = createSession(user.id);
+  res.cookie('sid', sessionId, {
+    signed: true,
+    httpOnly: true,
+    maxAge: 6000,
+    sameSite: 'lax',
+  });
+
+  res.redirect(`/confessions/${user.id}`);
 }
 
 module.exports = { get, post };
