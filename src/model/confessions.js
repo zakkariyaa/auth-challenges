@@ -1,4 +1,4 @@
-const db = require("../database/db.js");
+const db = require('../database/db.js');
 
 const select_confessions = db.prepare(/*sql*/ `
   SELECT content, created_at FROM confessions WHERE user_id = ?

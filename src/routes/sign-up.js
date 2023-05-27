@@ -26,19 +26,24 @@ function get(req, res) {
   res.send(body);
 }
 
-function post(req, res) {
+async function post(req, res) {
   const { email, password } = req.body;
+
   if (!email || !password) {
     res.status(400).send('Bad input');
   } else {
-    res.send('to-do');
-    /**
-     * [1] Hash the password
-     * [2] Create the user in the DB
-     * [3] Create the session with the new user's ID
-     * [4] Set a cookie with the session ID
-     * [5] Redirect to the user's confession page (e.g. /confessions/3)
-     */
+    const hash = await bcrypt.hash(password, 12);
+    const userId = createUser(email, hash).id;
+    const sessionId = createSession(userId);
+
+    res.cookie('sid', sessionId, {
+      signed: true,
+      httpOnly: true,
+      maxAge: 6000,
+      sameSite: 'lax',
+    });
+
+    res.redirect(`/confessions/${userId}`);
   }
 }
 
