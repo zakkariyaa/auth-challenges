@@ -39,7 +39,7 @@ async function post(req, res) {
   res.cookie('sid', sessionId, {
     signed: true,
     httpOnly: true,
-    maxAge: 6000,
+    maxAge: 24 * 60 * 60 * 1000,
     sameSite: 'lax',
   });
 

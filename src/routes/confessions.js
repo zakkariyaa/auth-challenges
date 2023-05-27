@@ -1,8 +1,8 @@
 const {
   listConfessions,
   createConfession,
-} = require("../model/confessions.js");
-const { Layout } = require("../templates.js");
+} = require('../model/confessions.js');
+const { Layout } = require('../templates.js');
 
 function get(req, res) {
   /**
@@ -15,7 +15,7 @@ function get(req, res) {
    * [5] If the logged in user is not the page owner send a 401 response
    */
   const confessions = listConfessions(req.params.user_id);
-  const title = "Your secrets";
+  const title = 'Your secrets';
   const content = /*html*/ `
     <div class="Cover">
       <h1>${title}</h1>
@@ -33,7 +33,7 @@ function get(req, res) {
             </li>
             `
           )
-          .join("")}
+          .join('')}
       </ul>
     </div>
   `;

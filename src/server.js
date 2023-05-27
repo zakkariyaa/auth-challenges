@@ -7,10 +7,10 @@ const logout = require('./routes/log-out.js');
 const confessions = require('./routes/confessions.js');
 require('dotenv').config();
 
-const body = express.urlencoded({ extended: false });
-const cookies = cookieParser(process.env.COOKIE_SECRET);
-
 const server = express();
+
+const body = express.urlencoded({ extended: false });
+server.use(cookieParser(process.env.COOKIE_SECRET));
 
 server.use((req, res, next) => {
   const time = new Date().toLocaleTimeString('en-GB');
@@ -18,7 +18,6 @@ server.use((req, res, next) => {
   next();
 });
 
-server.use(cookies);
 server.get('/', home.get);
 server.get('/sign-up', signup.get);
 server.post('/sign-up', body, signup.post);
