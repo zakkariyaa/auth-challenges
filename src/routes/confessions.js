@@ -3,12 +3,10 @@ const {
   createConfession,
 } = require('../model/confessions.js');
 const { Layout } = require('../templates.js');
-const { getSession } = require('../model/session.js');
 
 function get(req, res) {
-  const sessionId = req.signedCookies.sid;
-  const session = getSession(sessionId);
-  const userId = session ? session.user_id : null;
+  let userId = null;
+  if (req.session) userId = req.session.user_id;
   const pageOwner = Number(req.params.user_id);
 
   const confessions = listConfessions(req.params.user_id);
@@ -45,9 +43,8 @@ function get(req, res) {
 }
 
 function post(req, res) {
-  const sessionId = req.signedCookies.sid;
-  const session = getSession(sessionId);
-  const userId = session ? session.user_id : null;
+  let userId = null;
+  if (req.session) userId = req.session.user_id;
 
   if (!userId) {
     res.status(401).send('');

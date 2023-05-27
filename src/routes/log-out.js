@@ -1,7 +1,8 @@
 const { removeSession } = require('../model/session');
 
 function post(req, res) {
-  const sessionId = req.signedCookies.sid;
+  let sessionId = null;
+  if (req.session) sessionId = req.session.id;
   removeSession(sessionId);
 
   res.clearCookie('sid');
