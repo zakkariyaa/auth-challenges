@@ -3,8 +3,14 @@ const {
   createConfession,
 } = require('../model/confessions.js');
 const { Layout } = require('../templates.js');
+const { getSession } = require('../model/session.js');
 
 function get(req, res) {
+  const sessionId = req.signedCookies.sid;
+  const session = getSession(sessionId);
+  const userId = session ? session.user_id : null;
+  const pageOwner = Number(req.params.user_id);
+
   /**
    * Currently any user can view any other user's private confessions!
    * We need to ensure only the logged in user can see their page.
@@ -37,8 +43,14 @@ function get(req, res) {
       </ul>
     </div>
   `;
+
   const body = Layout({ title, content });
-  res.send(body);
+
+  if (userId !== pageOwner) {
+    res.status(401).send('Unauthorized access');
+  } else {
+    res.send(body);
+  }
 }
 
 function post(req, res) {
