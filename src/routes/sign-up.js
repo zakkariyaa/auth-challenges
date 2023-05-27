@@ -1,7 +1,11 @@
-const { Layout } = require("../templates.js");
+const { Layout } = require('../templates.js');
+const { createUser } = require('../model/user.js');
+const { createSession } = require('../model/session.js');
+
+const bcrypt = require('bcryptjs');
 
 function get(req, res) {
-  const title = "Create an account";
+  const title = 'Create an account';
   const content = /*html*/ `
     <div class="Cover">
       <h1>${title}</h1>
@@ -25,9 +29,9 @@ function get(req, res) {
 function post(req, res) {
   const { email, password } = req.body;
   if (!email || !password) {
-    res.status(400).send("Bad input");
+    res.status(400).send('Bad input');
   } else {
-    res.send("to-do");
+    res.send('to-do');
     /**
      * [1] Hash the password
      * [2] Create the user in the DB
